@@ -3,6 +3,7 @@ const ErrorResponse = require("../utils/errorResponse");
 const Request = require("../models/Request");
 const User = require("../models/User");
 const Camp = require("../models/Camp");
+const getSlotTime = require("../utils/dateUtils");
 
 //@desc  Get all requests
 //@route GET /api/v1/:slotId/requests
@@ -41,6 +42,12 @@ exports.acceptRequest = asyncHandler(async (req, res, next) => {
         404
       )
     );
+
+  if (getSlotTime(request.date, request.slot.slotType) > new Date().getTime()) {
+    return next(
+      new ErrorResponse(`You cannot accept request before the slot time`, 400)
+    );
+  }
 
   const camp = await Camp.findById(request.slot.camp._id);
 

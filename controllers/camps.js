@@ -1,4 +1,4 @@
-var _ = require("lodash/string");
+const _ = require("lodash/string");
 const ErrorResponse = require("../utils/errorResponse");
 const asyncHandler = require("../middleware/async");
 const City = require("../models/City");
@@ -54,6 +54,7 @@ exports.getCamp = asyncHandler(async (req, res, next) => {
 //@route PUT /api/v1/camps/:campId
 //@access Private
 exports.updateCamp = asyncHandler(async (req, res, next) => {
+  req.body.name = _.capitalize(req.body.name);
   const camp = await Camp.findByIdAndUpdate(req.params.campId, req.body, {
     new: true,
     runValidators: true,

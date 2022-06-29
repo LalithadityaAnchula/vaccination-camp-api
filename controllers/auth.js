@@ -1,3 +1,4 @@
+const _ = require("lodash");
 const ErrorResponse = require("../utils/errorResponse");
 const asyncHandler = require("../middleware/async");
 const User = require("../models/User");
@@ -11,8 +12,8 @@ exports.register = asyncHandler(async (req, res, next) => {
 
   //create user
   const user = await User.create({
-    firstName,
-    lastName,
+    firstName: _.capitalize(firstName),
+    lastName: _.capitalize(lastName),
     email,
     phone,
     aadhar,

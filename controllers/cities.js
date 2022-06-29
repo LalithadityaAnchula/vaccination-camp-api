@@ -1,4 +1,4 @@
-var _ = require("lodash/string");
+const _ = require("lodash/string");
 const City = require("../models/City");
 const User = require("../models/User");
 const ErrorResponse = require("../utils/errorResponse");
@@ -40,6 +40,7 @@ exports.getCity = asyncHandler(async (req, res, next) => {
 //@route PUT /api/v1/cities/:id
 //@access Private
 exports.updateCity = asyncHandler(async (req, res, next) => {
+  req.body.name = _.capitalize(req.body.name);
   const city = await City.findByIdAndUpdate(req.params.cityId, req.body, {
     new: true,
     runValidators: true,
