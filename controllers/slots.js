@@ -110,12 +110,14 @@ exports.bookSlot = asyncHandler(async (req, res, next) => {
   }
 
   if (getSlotTime(slot.date, slot.slotType) <= new Date().getTime()) {
-    return next(new ErrorResponse("you cant book a slot after it started"));
+    return next(
+      new ErrorResponse("you cant book a slot after it started", 400)
+    );
   }
   //validations for taking dose 1
   if (slot.doseType === 1) {
     if (req.user.firstDose !== undefined)
-      next(new ErrorResponse("You already took a first dose", 400));
+      return next(new ErrorResponse("You already took a first dose", 400));
   }
 
   //validations for taking second dose
@@ -152,6 +154,7 @@ exports.bookSlot = asyncHandler(async (req, res, next) => {
     slot: req.params.slotId,
     date: slot.date,
   });
+
   res.status(200).json({ success: true, data: slot });
 });
 
