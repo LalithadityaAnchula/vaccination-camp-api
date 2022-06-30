@@ -35,7 +35,7 @@ exports.getSlots = asyncHandler(async (req, res, next) => {
       slots = await Slot.find({
         camp: req.params.campId,
         available: { $gt: 0 },
-        date: { $gt: new Date().getTime() + 3888000000 },
+        date: { $gt: new Date().getTime() },
         _id: { $ne: dontSendSlot },
       }).populate("camp");
     }
