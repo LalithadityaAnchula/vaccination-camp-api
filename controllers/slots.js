@@ -29,41 +29,44 @@ exports.getSlots = asyncHandler(async (req, res, next) => {
 //@route POST /api/v1/camps/:campId/slots
 //@access Private
 exports.createSlot = asyncHandler(async (req, res, next) => {
-  //Check if slot creation time is valid
-  if (getSlotTime(req.body.date, req.body.slotType) < new Date().getTime()) {
+  //Convert to milliseconds and set time according to slotTypes
+  req.body.date = getSlotTime(
+    new Date(req.body.date).getTime(),
+    req.body.slotType
+  );
+  // Check if slot creation time is valid
+  if (req.body.date < new Date().getTime()) {
     return next(new ErrorResponse("Cant create slot in the past", 400));
   }
-  //Check exostence of camp
+  //Check existence of camp
   const camp = await Camp.findById(req.params.campId);
   //return 404 if camp is not found
   if (!camp)
     return next(
       new ErrorResponse(`Camp not found with id ${req.params.campId}`, 404)
     );
-
   //create only if stock is available
   if (req.body.doseType === 1 && camp.vaccinationStock.firstDose < 10) {
     return next(new ErrorResponse(`Not enough first dose stock`, 401));
   } else if (req.body.doseType === 2 && camp.vaccinationStock.secondDose < 10) {
     return next(new ErrorResponse(`Not enough second dose stock`, 401));
   }
-
   //add camp id to body
   const slots = await Slot.find({
     camp: req.params.campId,
     date: req.body.date,
   });
-
+  //Cant create more than 3 slots
   if (slots.length === 3)
     return next(new ErrorResponse(`Camp already has 3 slots`, 400));
-
+  //Cant have same slot type in a same day
   slots.forEach((slot) => {
     if (slot.slotType === req.body.slotType)
       return next(
         new ErrorResponse(`Slot type ${req.body.slotType} already exists`, 400)
       );
   });
-
+  //Setting camp id as referrence to slot
   req.body.camp = req.params.campId;
   //create slot
   const slot = await Slot.create(req.body);
@@ -92,7 +95,6 @@ exports.bookSlot = asyncHandler(async (req, res, next) => {
   //checking if user already has request
   if (requests.length > 0)
     return next(new ErrorResponse(`You already have a request`, 400));
-
   //Checking if the user is vaccinated
   if (req.user.firstDose && req.user.secondDose) {
     return next(new ErrorResponse(`User already has 2 doses`, 400));
@@ -108,7 +110,6 @@ exports.bookSlot = asyncHandler(async (req, res, next) => {
   if (slot.available === 0) {
     return next(new ErrorResponse(`Slot is full`, 400));
   }
-
   if (getSlotTime(slot.date, slot.slotType) <= new Date().getTime()) {
     return next(
       new ErrorResponse("you cant book a slot after it started", 400)
@@ -119,7 +120,6 @@ exports.bookSlot = asyncHandler(async (req, res, next) => {
     if (req.user.firstDose !== undefined)
       return next(new ErrorResponse("You already took a first dose", 400));
   }
-
   //validations for taking second dose
   if (slot.doseType === 2) {
     if (req.user.firstDose === undefined)

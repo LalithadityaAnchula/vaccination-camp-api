@@ -1,49 +1,31 @@
-const convertToIST = (date) => {
-  let currentTime = new Date(date);
-
-  let currentOffset = currentTime.getTimezoneOffset();
-
-  let ISTOffset = 330; // IST offset UTC +5:30
-
-  let ISTTime = new Date(
-    currentTime.getTime() + (ISTOffset + currentOffset) * 60000
-  );
-
-  return ISTTime;
-};
-
 const getSlotTime = (slotDate, slotType) => {
-  let date = convertToIST(slotDate);
-  date.setMinutes(0);
-  date.setSeconds(0);
-  date.setMilliseconds(0);
   if (slotType === "morning") {
-    date.setHours(9);
+    //add 9 hours
+    slotDate += 32400000;
   } else if (slotType === "afternoon") {
-    date.setHours(12);
+    //add 12 hours
+    slotDate += 43200000;
   } else if (slotType === "evening") {
-    date.setHours(17);
-  } else {
-    date.setHours(0);
+    //add 17 hours
+    slotDate += 61200000;
   }
-  return date.getTime();
+  //Subtracting and returning mongoDB time
+  return slotDate - 19800000;
 };
 
 const getSlotEndTime = (slotDate, slotType) => {
-  let date = convertToIST(slotDate);
-  date.setMinutes(0);
-  date.setSeconds(0);
-  date.setMilliseconds(0);
   if (slotType === "morning") {
-    date.setHours(11);
+    //add 11 hours
+    slotDate += 39600000;
   } else if (slotType === "afternoon") {
-    date.setHours(14);
+    //add 14 hours
+    slotDate += 50400000;
   } else if (slotType === "evening") {
-    date.setHours(19);
-  } else {
-    date.setHours(0);
+    //add 19 hours
+    slotDate += 68400000;
   }
-  return date.getTime();
+  //Subtracting and returning mongoDB time
+  return slotDate - 19800000;
 };
 
 module.exports = { getSlotTime, getSlotEndTime };

@@ -14,7 +14,7 @@ const RequestSchema = new mongoose.Schema({
   date: {
     type: Date,
     required: [true, "Date is required"],
-    expires: "1d",
+    expires: "2h",
   },
 });
 
