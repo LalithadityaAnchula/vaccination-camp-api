@@ -1,6 +1,7 @@
 const _ = require("lodash");
 const ErrorResponse = require("../utils/errorResponse");
 const asyncHandler = require("../middleware/async");
+const { getSlotEndTime } = require("../utils/dateUtils");
 const User = require("../models/User");
 
 //@desc  Register a user
@@ -70,7 +71,31 @@ exports.logout = asyncHandler(async (req, res, next) => {
 //@route GET /api/v1/auth/me
 //@access Private
 exports.getMe = asyncHandler(async (req, res, next) => {
-  const user = await User.findById(req.user.id);
+  let user = req.user.toObject();
+  if (user.activeSlot !== undefined) {
+    console.log(
+      getSlotEndTime(user.activeSlot.date, user.activeSlot.slotType),
+      new Date().getTime()
+    );
+    if (
+      getSlotEndTime(user.activeSlot.date, user.activeSlot.slotType) <
+      new Date().getTime()
+    ) {
+      const userObj = {
+        $unset: { activeSlot: "" },
+      };
+      doc = await User.findOneAndUpdate(
+        { _id: user._id }, //filter
+        userObj, //update
+        {
+          //options
+          returnNewDocument: true,
+          new: true,
+          strict: false,
+        }
+      );
+    }
+  }
   res.status(200).json({ success: true, data: user, role: user.role });
 });
 

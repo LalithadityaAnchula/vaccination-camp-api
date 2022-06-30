@@ -3,7 +3,7 @@ const ErrorResponse = require("../utils/errorResponse");
 const Request = require("../models/Request");
 const User = require("../models/User");
 const Camp = require("../models/Camp");
-const getSlotTime = require("../utils/dateUtils");
+const { getSlotTime } = require("../utils/dateUtils");
 
 //@desc  Get all requests
 //@route GET /api/v1/:slotId/requests

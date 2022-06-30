@@ -1,5 +1,5 @@
 const ErrorResponse = require("../utils/errorResponse");
-const getSlotTime = require("../utils/dateUtils");
+const { getSlotTime } = require("../utils/dateUtils");
 const asyncHandler = require("../middleware/async");
 const Slot = require("../models/Slot");
 const Camp = require("../models/Camp");

@@ -29,4 +29,21 @@ const getSlotTime = (slotDate, slotType) => {
   return date.getTime();
 };
 
-module.exports = getSlotTime;
+const getSlotEndTime = (slotDate, slotType) => {
+  let date = convertToIST(slotDate);
+  date.setMinutes(0);
+  date.setSeconds(0);
+  date.setMilliseconds(0);
+  if (slotType === "morning") {
+    date.setHours(11);
+  } else if (slotType === "afternoon") {
+    date.setHours(14);
+  } else if (slotType === "evening") {
+    date.setHours(19);
+  } else {
+    date.setHours(0);
+  }
+  return date.getTime();
+};
+
+module.exports = { getSlotTime, getSlotEndTime };

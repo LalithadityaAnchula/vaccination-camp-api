@@ -3,7 +3,6 @@ const City = require("../models/City");
 const User = require("../models/User");
 const ErrorResponse = require("../utils/errorResponse");
 const asyncHandler = require("../middleware/async");
-const { cond } = require("lodash");
 const { SchemaTypeOptions } = require("mongoose");
 
 //@desc  Get all cities
