@@ -54,7 +54,6 @@ exports.updateCity = asyncHandler(async (req, res, next) => {
 //@desc  GET vaccination Stats
 //@route GET /api/v1/cities/:id/statss
 //@access Private
-
 exports.getStats = asyncHandler(async (req, res, next) => {
   //Getting users with first dose
   const results = await User.find({

@@ -11,17 +11,23 @@ const Request = require("../models/Request");
 //@access Private
 exports.getSlots = asyncHandler(async (req, res, next) => {
   let dontSendSlot = req.user._id;
+  let slots = [];
   if (req.user.role == "user") {
     const requests = await Request.find({ user: req.user._id });
     if (requests.length > 0) {
       dontSendSlot = requests[0].slot._id;
     }
+    slots = await Slot.find({
+      camp: req.params.campId,
+      available: { $gt: 0 },
+      date: { $gt: new Date() },
+      _id: { $ne: dontSendSlot },
+    }).populate("camp");
+  } else if (req.user.role == "admin") {
+    slots = await Slot.find({
+      camp: req.params.campId,
+    }).populate("camp");
   }
-  const slots = await Slot.find({
-    camp: req.params.campId,
-    available: { $gt: 0 },
-    _id: { $ne: dontSendSlot },
-  }).populate("camp");
   res.status(200).json({ success: true, data: slots });
 });
 

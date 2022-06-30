@@ -73,10 +73,6 @@ exports.logout = asyncHandler(async (req, res, next) => {
 exports.getMe = asyncHandler(async (req, res, next) => {
   let user = req.user.toObject();
   if (user.activeSlot !== undefined) {
-    console.log(
-      getSlotEndTime(user.activeSlot.date, user.activeSlot.slotType),
-      new Date().getTime()
-    );
     if (
       getSlotEndTime(user.activeSlot.date, user.activeSlot.slotType) <
       new Date().getTime()
