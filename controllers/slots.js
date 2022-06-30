@@ -10,19 +10,35 @@ const Request = require("../models/Request");
 //@route GET /api/v1/camps/:campId/slots
 //@access Private
 exports.getSlots = asyncHandler(async (req, res, next) => {
+  req.user = req.user.toObject();
   let dontSendSlot = req.user._id;
   let slots = [];
   if (req.user.role == "user") {
+    if (req.user.firstDose && req.user.secondDose) {
+      return next(
+        new ErrorResponse(`No slots available for users who are vaccinated`)
+      );
+    }
     const requests = await Request.find({ user: req.user._id });
     if (requests.length > 0) {
       dontSendSlot = requests[0].slot._id;
     }
-    slots = await Slot.find({
-      camp: req.params.campId,
-      available: { $gt: 0 },
-      date: { $gt: new Date() },
-      _id: { $ne: dontSendSlot },
-    }).populate("camp");
+    if (req.user.firstDose) {
+      slots = await Slot.find({
+        doseType: 2,
+        camp: req.params.campId,
+        available: { $gt: 0 },
+        date: { $gt: new Date().getTime() + 3888000000 },
+        _id: { $ne: dontSendSlot },
+      }).populate("camp");
+    } else {
+      slots = await Slot.find({
+        camp: req.params.campId,
+        available: { $gt: 0 },
+        date: { $gt: new Date().getTime() + 3888000000 },
+        _id: { $ne: dontSendSlot },
+      }).populate("camp");
+    }
   } else if (req.user.role == "admin") {
     slots = await Slot.find({
       camp: req.params.campId,
@@ -160,7 +176,6 @@ exports.bookSlot = asyncHandler(async (req, res, next) => {
     slot: req.params.slotId,
     date: slot.date,
   });
-
   res.status(200).json({ success: true, data: slot });
 });
 
