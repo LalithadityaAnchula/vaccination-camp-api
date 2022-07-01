@@ -4,6 +4,7 @@ const morgan = require("morgan");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const mongoSanitize = require("express-mongo-sanitize");
+const helmet = require("helmet");
 const errorHandler = require("./middleware/error");
 const connectDB = require("./config/db.js");
 
@@ -33,6 +34,9 @@ app.use(express.json());
 
 //Prevent NoSQL injection middlware
 app.use(mongoSanitize());
+
+//Set secure headers using helmet middleware
+app.use(helmet());
 
 //Cookie Parser
 app.use(cookieParser());
