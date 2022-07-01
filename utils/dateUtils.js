@@ -1,31 +1,39 @@
+const THREE_HUNDRED_THIRTY_MINUTES_IN_MS = 19800000;
+
 const getSlotTime = (slotDate, slotType) => {
   if (slotType === "morning") {
     //add 9 hours
-    slotDate += 32400000;
+    const NINE_HOURS_IN_MS = 32400000;
+    slotDate += NINE_HOURS_IN_MS;
   } else if (slotType === "afternoon") {
     //add 12 hours
-    slotDate += 43200000;
+    const TWELVE_HOURS_IN_MS = 43200000;
+    slotDate += TWELVE_HOURS_IN_MS;
   } else if (slotType === "evening") {
     //add 17 hours
-    slotDate += 61200000;
+    const SEVENTEEN_HOURS_IN_MS = 61200000;
+    slotDate += SEVENTEEN_HOURS_IN_MS;
   }
   //Subtracting and returning mongoDB time
-  return slotDate - 19800000;
+  return slotDate - THREE_HUNDRED_THIRTY_MINUTES_IN_MS;
 };
 
 const getSlotEndTime = (slotDate, slotType) => {
   if (slotType === "morning") {
     //add 11 hours
-    slotDate += 39600000;
+    const ELEVEN_HOURS_IN_MS = 39600000;
+    slotDate += ELEVEN_HOURS_IN_MS;
   } else if (slotType === "afternoon") {
     //add 14 hours
-    slotDate += 50400000;
+    const FOURTEEN_HOURS_IN_MS = 50400000;
+    slotDate += FOURTEEN_HOURS_IN_MS;
   } else if (slotType === "evening") {
     //add 19 hours
-    slotDate += 68400000;
+    const NINETEEN_HOURS_IN_MS = 68400000;
+    slotDate += NINETEEN_HOURS_IN_MS;
   }
   //Subtracting and returning mongoDB time
-  return slotDate - 19800000;
+  return slotDate - THREE_HUNDRED_THIRTY_MINUTES_IN_MS;
 };
 
 module.exports = { getSlotTime, getSlotEndTime };
