@@ -3,6 +3,7 @@ const dotenv = require("dotenv");
 const morgan = require("morgan");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
+const mongoSanitize = require("express-mongo-sanitize");
 const errorHandler = require("./middleware/error");
 const connectDB = require("./config/db.js");
 
@@ -29,6 +30,9 @@ if (process.env.NODE_ENV === "development") {
 
 //Body parser middleware
 app.use(express.json());
+
+//Prevent NoSQL injection middlware
+app.use(mongoSanitize());
 
 //Cookie Parser
 app.use(cookieParser());
