@@ -28,7 +28,7 @@ exports.getSlots = asyncHandler(async (req, res, next) => {
         doseType: 2,
         camp: req.params.campId,
         available: { $gt: 0 },
-        date: { $gt: new Date().getTime() + 3888000000 },
+        date: { $gt: req.user.firstDose.date.getTime() + 3888000000 },
         _id: { $ne: dontSendSlot },
       }).populate("camp");
     } else {
