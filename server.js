@@ -5,6 +5,7 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const mongoSanitize = require("express-mongo-sanitize");
 const helmet = require("helmet");
+var xss = require("xss-clean");
 const errorHandler = require("./middleware/error");
 const connectDB = require("./config/db.js");
 
@@ -37,6 +38,9 @@ app.use(mongoSanitize());
 
 //Set secure headers using helmet middleware
 app.use(helmet());
+
+//Set xss middleware
+app.use(xss());
 
 //Cookie Parser
 app.use(cookieParser());
