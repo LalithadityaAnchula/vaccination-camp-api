@@ -5,7 +5,9 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const mongoSanitize = require("express-mongo-sanitize");
 const helmet = require("helmet");
-var xss = require("xss-clean");
+const xss = require("xss-clean");
+const rateLimit = require("express-rate-limit");
+const hpp = require("hpp");
 const errorHandler = require("./middleware/error");
 const connectDB = require("./config/db.js");
 
@@ -25,9 +27,12 @@ const downloads = require("./routes/downloads");
 //intializing app variable with express
 const app = express();
 
-//cors middleware
+//Cookie Parser
+app.use(cookieParser());
+
+//Dev logging middleware
 if (process.env.NODE_ENV === "development") {
-  app.use(cors({ origin: "http://localhost:3000", credentials: true }));
+  app.use(morgan("dev"));
 }
 
 //Body parser middleware
@@ -42,12 +47,21 @@ app.use(helmet());
 //Set xss middleware
 app.use(xss());
 
-//Cookie Parser
-app.use(cookieParser());
+// Apply the rate limiting middleware to all requests
+const limiter = rateLimit({
+  windowMs: 10 * 60 * 1000, // 15 minutes
+  max: 100, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
+  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+});
+app.use(limiter);
 
-//Dev logging middleware
+//Preventing HTTP Parameter pollution
+app.use(hpp());
+
+//cors middleware
 if (process.env.NODE_ENV === "development") {
-  app.use(morgan("dev"));
+  app.use(cors({ origin: "http://localhost:3000", credentials: true }));
 }
 
 //Mount routers or linking routers
