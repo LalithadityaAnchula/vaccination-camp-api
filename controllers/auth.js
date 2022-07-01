@@ -37,7 +37,9 @@ exports.authenticate = asyncHandler(async (req, res, next) => {
 //@access Public
 
 exports.login = asyncHandler(async (req, res, next) => {
+  //Destructuring email and password
   const { email, password } = req.body;
+
   //validating email and password
   if (!email || !password)
     return next(new ErrorResponse("Please provide an email and password", 400));
