@@ -33,6 +33,7 @@ exports.getSlots = asyncHandler(async (req, res, next) => {
       }).populate("camp");
     } else {
       slots = await Slot.find({
+        doseType: 1,
         camp: req.params.campId,
         available: { $gt: 0 },
         date: { $gt: new Date().getTime() },
