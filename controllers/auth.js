@@ -76,7 +76,7 @@ exports.getMe = asyncHandler(async (req, res, next) => {
   let user = req.user.toObject();
   if (user.activeSlot !== undefined) {
     if (
-      getSlotEndTime(user.activeSlot.date, user.activeSlot.slotType) <
+      getSlotEndTime(user.activeSlot.date.getTime(), user.activeSlot.slotType) <
       new Date().getTime()
     ) {
       const userObj = {
@@ -92,6 +92,7 @@ exports.getMe = asyncHandler(async (req, res, next) => {
           strict: false,
         }
       );
+      console.log(doc);
     }
   }
   res.status(200).json({ success: true, data: user, role: user.role });

@@ -33,6 +33,7 @@ const getSlotEndTime = (slotDate, slotType) => {
     slotDate += NINETEEN_HOURS_IN_MS;
   }
   //Subtracting and returning mongoDB time
+  console.log(slotDate);
   return slotDate - THREE_HUNDRED_THIRTY_MINUTES_IN_MS;
 };
 
