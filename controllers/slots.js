@@ -24,11 +24,14 @@ exports.getSlots = asyncHandler(async (req, res, next) => {
       dontSendSlot = requests[0].slot._id;
     }
     if (req.user.firstDose) {
+      const FOURTY_FIVE_DAYS_IN_MS = 3888000000;
       slots = await Slot.find({
         doseType: 2,
         camp: req.params.campId,
         available: { $gt: 0 },
-        date: { $gt: req.user.firstDose.date.getTime() + 3888000000 },
+        date: {
+          $gt: req.user.firstDose.date.getTime() + FOURTY_FIVE_DAYS_IN_MS,
+        },
         _id: { $ne: dontSendSlot },
       }).populate("camp");
     } else {
