@@ -27,6 +27,9 @@ const downloads = require("./routes/downloads");
 //intializing app variable with express
 const app = express();
 
+//Body parser middleware
+app.use(express.json());
+
 //Cookie Parser
 app.use(cookieParser());
 
@@ -34,9 +37,6 @@ app.use(cookieParser());
 if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));
 }
-
-//Body parser middleware
-app.use(express.json());
 
 //Prevent NoSQL injection middlware
 app.use(mongoSanitize());
