@@ -124,7 +124,7 @@ const sendTokenResponse = (user, statusCode, res) => {
     httpOnly: true,
   };
 
-  if (process.env.NODE_ENV == "production") {
+  if (process.env.NODE_ENV === "production") {
     options.secure = true;
     options.sameSite = "Strict";
   }
