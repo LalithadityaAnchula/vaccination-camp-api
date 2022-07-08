@@ -28,6 +28,6 @@ router
   .get(protect, authorize("admin"), getCity)
   .put(protect, authorize("admin"), updateCity);
 
-router.route("/:cityName/stats").get(protect, authorize("admin"), getStats);
+router.route("/:cityId/stats").get(protect, authorize("admin"), getStats);
 
 module.exports = router;

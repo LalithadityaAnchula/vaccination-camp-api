@@ -55,9 +55,12 @@ exports.updateCity = asyncHandler(async (req, res, next) => {
 //@route GET /api/v1/cities/:id/statss
 //@access Private
 exports.getStats = asyncHandler(async (req, res, next) => {
+  //Getting city
+  const city = await City.findById(req.params.cityId);
+
   //Getting users with first dose
   const results = await User.find({
-    "firstDose.camp.city.name": req.params.cityName,
+    "firstDose.camp.city.name": city.name,
   })
     .setOptions({ strictQuery: false })
     .select("firstDose secondDose");
@@ -68,8 +71,6 @@ exports.getStats = asyncHandler(async (req, res, next) => {
     if (result.secondDose !== undefined) vaccianted += 1;
   });
 
-  //Getting population of city
-  const city = await City.findOne({ name: req.params.cityName });
   const population = city.population;
   res.status(200).json({
     success: true,
