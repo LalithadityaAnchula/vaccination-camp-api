@@ -47,14 +47,16 @@ app.use(helmet());
 //Set xss middleware
 app.use(xss());
 
-// Apply the rate limiting middleware to all requests
-const limiter = rateLimit({
-  windowMs: 20 * 60 * 1000, // 15 minutes
-  max: 200, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
-  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
-  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
-});
-app.use(limiter);
+if (process.env.NODE_ENV === "production") {
+  // Apply the rate limiting middleware to all requests
+  const limiter = rateLimit({
+    windowMs: 20 * 60 * 1000, // 15 minutes
+    max: 200, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
+    standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+    legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+  });
+  app.use(limiter);
+}
 
 //Preventing HTTP Parameter pollution
 app.use(hpp());
