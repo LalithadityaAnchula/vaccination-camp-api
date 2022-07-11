@@ -3,7 +3,6 @@ const ErrorResponse = require("../utils/errorResponse");
 const asyncHandler = require("../middleware/async");
 const { getSlotEndTime } = require("../utils/dateUtils");
 const User = require("../models/User");
-const { aggregate } = require("../models/City");
 const parser = require("ua-parser-js");
 
 //@desc  Register a user
