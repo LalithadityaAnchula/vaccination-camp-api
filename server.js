@@ -1,4 +1,6 @@
 const express = require("express");
+const session = require("express-session");
+const MongoStore = require("connect-mongo");
 const dotenv = require("dotenv");
 const morgan = require("morgan");
 const cors = require("cors");
@@ -30,6 +32,20 @@ const app = express();
 //Body parser middleware
 app.use(express.json());
 
+//express session middleware
+app.use(
+  session({
+    name: "_iamsid",
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    store: new MongoStore({
+      url: process.env.MONGO_URI,
+      collection: "sessions",
+    }),
+  })
+);
+
 //Cookie Parser
 app.use(cookieParser());
 
@@ -50,8 +66,8 @@ app.use(xss());
 if (process.env.NODE_ENV === "production") {
   // Apply the rate limiting middleware to all requests
   const limiter = rateLimit({
-    windowMs: 20 * 60 * 1000, // 15 minutes
-    max: 200, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
+    windowMs: 4 * 60 * 1000, // 4 minutes
+    max: 200, // Limit each IP to 200 requests per `window` (here, per 4 minutes)
     standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
     legacyHeaders: false, // Disable the `X-RateLimit-*` headers
   });
