@@ -33,7 +33,7 @@ const app = express();
 app.use(express.json());
 
 //options for session cookie
-let options = { maxAge: 1000 * 60 * 60 * 24 * 7 }; // 7 days validity (1000 * MINS * SECS * HOURS * DAYS ->7 days in  milliseconds)};
+let options = { maxAge: 1000 * 60 * 60 * 1 }; // 1 hour in milliseconds
 if (process.env.NODE_ENV === "production") {
   options.secure = true;
   options.sameSite = "Strict";

@@ -51,7 +51,7 @@ exports.getActiveSessions = asyncHandler(async (req, res, next) => {
       ua: sessionObj.ua,
     };
   });
-  res.status(200).json({ success: true, data: { sessions } });
+  res.status(200).json({ success: true, data: sessions });
 });
 
 //@desc  Login a user
