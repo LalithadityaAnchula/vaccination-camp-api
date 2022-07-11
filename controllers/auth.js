@@ -75,7 +75,7 @@ exports.logout = asyncHandler(async (req, res, next) => {
     console.log(err);
   });
 
-  res.status(200).json({ success: true, data: {} });
+  res.clearCookie("_iamsid").status(200).json({ success: true, data: {} });
 });
 
 //@desc  Get current user
