@@ -43,6 +43,9 @@ app.use(
       url: process.env.MONGO_URI,
       collection: "sessions",
     }),
+    cookie: {
+      maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days validity (1000 * MINS * SECS * HOURS * DAYS ->7 days in  milliseconds)
+    },
   })
 );
 
