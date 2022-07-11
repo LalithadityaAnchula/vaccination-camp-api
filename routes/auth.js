@@ -25,6 +25,6 @@ router
 router
   .get("/sessions", protect, getActiveSessions)
   .delete("/sessions", protect, terminateSessions)
-  .delete("/sessions/:id", protect, terminateSession);
+  .delete("/sessions/:sessionId", protect, terminateSession);
 
 module.exports = router;

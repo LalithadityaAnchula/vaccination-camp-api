@@ -114,8 +114,8 @@ exports.terminateSessions = asyncHandler(async (req, res, next) => {
 //@access Protected
 exports.terminateSession = asyncHandler(async (req, res, next) => {
   const db = mongoose.connection.db;
-  await db.collection("sessions").findByIdAndDelete(req.params.sessionId);
-  res.status(200).json({ success: true, data: {} });
+  await db.collection("sessions").deleteOne({ _id: req.params.sessionId });
+  res.status(200).json({ success: true, data: req.params.sessionId });
 });
 
 //@desc  Get current user
@@ -141,7 +141,6 @@ exports.getMe = asyncHandler(async (req, res, next) => {
           strict: false,
         }
       );
-      console.log(doc);
     }
   }
   res.status(200).json({ success: true, data: user, role: user.role });
