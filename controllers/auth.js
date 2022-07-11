@@ -3,6 +3,8 @@ const ErrorResponse = require("../utils/errorResponse");
 const asyncHandler = require("../middleware/async");
 const { getSlotEndTime } = require("../utils/dateUtils");
 const User = require("../models/User");
+const { aggregate } = require("../models/City");
+const parser = require("ua-parser-js");
 
 //@desc  Register a user
 //@route POST /api/v1/auth/register
@@ -22,9 +24,7 @@ exports.register = asyncHandler(async (req, res, next) => {
   });
 
   //updating session variables by setting user id and setting cookie
-  req.session.userId = user._id;
-
-  res.status(200).json({ success: true, data: {}, role: user.role });
+  updateSessionAndSendResponse(req, res, user, 200);
 });
 
 //@desc  Login a user
@@ -59,9 +59,7 @@ exports.login = asyncHandler(async (req, res, next) => {
   if (!isMatch) return next(new ErrorResponse("Invalid credentials", 401));
 
   //updating session variables by setting user id and setting cookie
-  req.session.userId = user._id;
-
-  res.status(200).json({ success: true, data: {}, role: user.role });
+  updateSessionAndSendResponse(req, res, user, 200);
 });
 
 //@desc  logout the user
@@ -126,23 +124,12 @@ exports.updateMe = asyncHandler(async (req, res, next) => {
   res.status(200).json({ success: true, data: user });
 });
 
-// //Get token from model,create cookie and send response
-// const sendTokenResponse = (user, statusCode, res) => {
-//   const token = user.getSignedJwtToken();
-//   const options = {
-//     expires: new Date(
-//       Date.now() + process.env.JWT_COOKIE_EXPIRE * 24 * 60 * 60 * 1000
-//     ),
-//     httpOnly: true,
-//   };
+//Get token from model,create cookie and send response
+const updateSessionAndSendResponse = (req, res, user, statusCode) => {
+  //setting user id in session
+  req.session.userId = user._id;
+  //updating user agent details in session
+  req.session.ua = parser(req.headers["user-agent"]);
 
-//   if (process.env.NODE_ENV === "production") {
-//     options.secure = true;
-//     options.sameSite = "Strict";
-//   }
-
-//   res
-//     .status(statusCode)
-//     .cookie("token", token, options)
-//     .json({ success: true, token, data: user, role: user.role });
-// };
+  res.status(statusCode).json({ success: true, data: user, role: user.role });
+};
