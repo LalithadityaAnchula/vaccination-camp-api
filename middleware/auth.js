@@ -6,28 +6,16 @@ const asyncHandler = require("../middleware/async");
 //Protect routes
 
 exports.protect = asyncHandler(async (req, res, next) => {
-  let token;
-  if (
-    req.headers.authorization &&
-    req.headers.authorization.startsWith("Bearer")
-  ) {
-    token = req.headers.authorization.split(" ")[1];
-  } else if (req.cookies.token) {
-    token = req.cookies.token;
-  }
-
-  // Make sure token is sent
-  if (!token) {
-    return next(new ErrorResponse("Please login or register to continue", 401));
-  }
-
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = await User.findById(decoded.id);
+  //Check for valid session
+  if (!req.session.userId) {
+    return next(new ErrorResponse("Please login to access this route", 401));
+  } else {
+    const user = await User.findById(req.session.userId);
+    if (!user) {
+      return next(new ErrorResponse("Please login to access this route", 401));
+    }
+    req.user = user;
     next();
-  } catch (err) {
-    console.log(err);
-    return next(new ErrorResponse("Not an authenticated user", 401));
   }
 });
 

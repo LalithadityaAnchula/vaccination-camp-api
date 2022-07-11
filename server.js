@@ -32,6 +32,13 @@ const app = express();
 //Body parser middleware
 app.use(express.json());
 
+//options for session cookie
+let options = { maxAge: 1000 * 60 * 60 * 24 * 7 }; // 7 days validity (1000 * MINS * SECS * HOURS * DAYS ->7 days in  milliseconds)};
+if (process.env.NODE_ENV === "production") {
+  options.secure = true;
+  options.sameSite = "Strict";
+}
+
 //express session middleware
 app.use(
   session({
@@ -44,7 +51,7 @@ app.use(
       collection: "sessions",
     }),
     cookie: {
-      maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days validity (1000 * MINS * SECS * HOURS * DAYS ->7 days in  milliseconds)
+      ...options,
     },
   })
 );
