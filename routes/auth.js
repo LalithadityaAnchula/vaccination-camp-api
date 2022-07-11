@@ -6,6 +6,9 @@ const {
   getMe,
   logout,
   updateMe,
+  getActiveSessions,
+  terminateSessions,
+  terminateSession,
 } = require("../controllers/auth");
 
 const router = express.Router();
@@ -18,5 +21,10 @@ router
   .get("/logout", logout)
   .get("/me", protect, getMe)
   .put("/me", protect, updateMe);
+
+router
+  .get("/sessions", protect, getActiveSessions)
+  .delete("/sessions", protect, terminateSessions)
+  .delete("/sessions/:id", protect, terminateSession);
 
 module.exports = router;

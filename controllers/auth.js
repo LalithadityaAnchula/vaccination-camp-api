@@ -1,3 +1,4 @@
+const mongoose = require("mongoose");
 const _ = require("lodash");
 const ErrorResponse = require("../utils/errorResponse");
 const asyncHandler = require("../middleware/async");
@@ -32,6 +33,25 @@ exports.register = asyncHandler(async (req, res, next) => {
 
 exports.authenticate = asyncHandler(async (req, res, next) => {
   res.status(200).json({ success: true, data: {}, role: req.user.role });
+});
+
+//@desc  Get active sessions
+//@route GET /api/v1/auth/sessions
+//@access Protected
+exports.getActiveSessions = asyncHandler(async (req, res, next) => {
+  const db = mongoose.connection.db;
+  let sessions = await db
+    .collection("sessions")
+    .find({ session: new RegExp(`"userId":"${req.user._id}",`, "i") })
+    .toArray();
+  sessions = sessions.map((session) => {
+    const sessionObj = JSON.parse(session.session);
+    return {
+      id: session._id,
+      ua: sessionObj.ua,
+    };
+  });
+  res.status(200).json({ success: true, data: { sessions } });
 });
 
 //@desc  Login a user
@@ -76,6 +96,26 @@ exports.logout = asyncHandler(async (req, res, next) => {
   });
 
   res.clearCookie("_iamsid").status(200).json({ success: true, data: {} });
+});
+
+//@desc  terminate all sessions
+//@route DELETE /api/v1/auth/sessions
+//@access Protected
+exports.terminateSessions = asyncHandler(async (req, res, next) => {
+  const db = mongoose.connection.db;
+  await db
+    .collection("sessions")
+    .deleteMany({ session: new RegExp(`"userId":"${req.user._id}",`, "i") });
+  res.status(200).json({ success: true, data: {} });
+});
+
+//@desc  terminate the session
+//@route DELETE /api/v1/auth/sessions/:sessionId
+//@access Protected
+exports.terminateSession = asyncHandler(async (req, res, next) => {
+  const db = mongoose.connection.db;
+  await db.collection("sessions").findByIdAndDelete(req.params.sessionId);
+  res.status(200).json({ success: true, data: {} });
 });
 
 //@desc  Get current user
