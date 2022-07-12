@@ -3,6 +3,7 @@ const _ = require("lodash");
 const ErrorResponse = require("../utils/errorResponse");
 const asyncHandler = require("../middleware/async");
 const { getSlotEndTime } = require("../utils/dateUtils");
+const getActiveSessionsOfUser = require("../utils/sessions");
 const User = require("../models/User");
 const parser = require("ua-parser-js");
 
@@ -39,18 +40,7 @@ exports.authenticate = asyncHandler(async (req, res, next) => {
 //@route GET /api/v1/auth/sessions
 //@access Protected
 exports.getActiveSessions = asyncHandler(async (req, res, next) => {
-  const db = mongoose.connection.db;
-  let sessions = await db
-    .collection("sessions")
-    .find({ session: new RegExp(`"userId":"${req.user._id}",`, "i") })
-    .toArray();
-  sessions = sessions.map((session) => {
-    const sessionObj = JSON.parse(session.session);
-    return {
-      id: session._id,
-      ua: sessionObj.ua,
-    };
-  });
+  const sessions = await getActiveSessionsOfUser(req.user._id);
   res.status(200).json({ success: true, data: sessions });
 });
 
@@ -77,6 +67,19 @@ exports.login = asyncHandler(async (req, res, next) => {
 
   if (!isMatch) return next(new ErrorResponse("Invalid credentials", 401));
 
+  //getting sessions
+
+  const sessions = await getActiveSessionsOfUser(user._id);
+  const ua = parser(req.headers["user-agent"]);
+  let flag = false;
+  sessions.forEach((session) => {
+    if (session.ua.browser.name === ua.browser.name) {
+      flag = true;
+    }
+  });
+  if (flag) {
+    return next(new ErrorResponse("Your browser have an active session", 401));
+  }
   //updating session variables by setting user id and setting cookie
   updateSessionAndSendResponse(req, res, user, 200);
 });
