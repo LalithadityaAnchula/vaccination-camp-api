@@ -4,7 +4,6 @@ const MongoStore = require("connect-mongo");
 const dotenv = require("dotenv");
 const morgan = require("morgan");
 const cors = require("cors");
-const cookieParser = require("cookie-parser");
 const mongoSanitize = require("express-mongo-sanitize");
 const helmet = require("helmet");
 const xss = require("xss-clean");
