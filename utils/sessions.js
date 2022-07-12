@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const getActiveSessionsOfUser = async (userId) => {
+const getActiveSessionsOfUser = async (req, userId) => {
   const db = mongoose.connection.db;
   let sessions = await db
     .collection("sessions")
@@ -11,6 +11,7 @@ const getActiveSessionsOfUser = async (userId) => {
     return {
       id: session._id,
       ua: sessionObj.ua,
+      current: session._id === req.session.id,
     };
   });
   return sessions;

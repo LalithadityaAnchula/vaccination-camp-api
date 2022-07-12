@@ -40,7 +40,7 @@ exports.authenticate = asyncHandler(async (req, res, next) => {
 //@route GET /api/v1/auth/sessions
 //@access Protected
 exports.getActiveSessions = asyncHandler(async (req, res, next) => {
-  const sessions = await getActiveSessionsOfUser(req.user._id);
+  const sessions = await getActiveSessionsOfUser(req, req.user._id);
   res.status(200).json({ success: true, data: sessions });
 });
 
@@ -69,7 +69,7 @@ exports.login = asyncHandler(async (req, res, next) => {
 
   //getting sessions
 
-  const sessions = await getActiveSessionsOfUser(user._id);
+  const sessions = await getActiveSessionsOfUser(req, user._id);
   const ua = parser(req.headers["user-agent"]);
   let flag = false;
   sessions.forEach((session) => {
