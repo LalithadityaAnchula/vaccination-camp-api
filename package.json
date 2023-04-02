@@ -26,6 +26,7 @@
     "lodash": "^4.17.21",
     "mongoose": "^6.3.8",
     "morgan": "^1.10.0",
+    "nodemon": "^2.0.22",
     "pdf-lib": "^1.17.1",
     "ua-parser-js": "^1.0.2",
     "xss-clean": "^0.1.1"
